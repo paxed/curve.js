@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>test2</title>
+    <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<style>
+
+#container {
+    width: 800px;
+    height: 600px;
+    float: right;
+}
+
+#otherstuff {
+    border: 1px solid black;
+    background-color: #d0d0d0;
+    padding: 1em;
+}
+
+#mapc_params {
+    font-family: monospace;
+}
+
+</style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<div id="otherstuff">
+ <span id="camera_coord"></span>
+ <div id="curve_inputs"></div>
+ <a href="#" onclick="random_curve(); regen_scene();">randomize</a>
+ <hr>
+ <div id="mapc_params"></div>
+</div>
+<script src="three.min.js"></script>
+<script src="utils.js"></script>
+
+<script src="curve.js"></script>
+
+
+<script>
+
+var curve_vars = new Array(
+    'thickness', 'usesteps', 'totalstep', 'innerdrop', 'outerdrop', 'hill',
+    'ct', 'r0', 'r1', 'r2', 'r3', 'n', 'a0', 'a1'
+);
+
+
+var container;
+
+var views, scene, renderer;
+
+var meshes = new Array();
+var light;
+
+var mouseX = 0, mouseY = 0;
+
+var windowWidth, windowHeight;
+
+var view = {
+    background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
+    eye: [ 400, 300, 500 ],
+    up: [ 0, 1, 0 ],
+    fov: 60,
+    updateCamera: function ( camera, scene, mouseX, mouseY ) {
+	
+        //camera.position.y -= 1; /*mouseX * 0.05; */
+        camera.position.y = Math.max( Math.min( camera.position.y, 1600 ), -1600 );
+
+        camera.lookAt( scene.position );
+	//$('camera_coord').innerHTML = '(' + Math.floor(camera.position.x) + ', ' + Math.floor(camera.position.y) + ', ' + Math.floor(camera.position.z) + ')';
+    }
+};
+
+output_curve_inputs();
+init();
+animate();
+
+function set_curve_var(v) {
+    eval(v + " = " + $('curve_var_input_' + v).value + ";");
+    regen_scene();
+}
+
+function output_curve_inputs() {
+    var str = '<table>';
+    for (var i = 0; i < curve_vars.length; i++) {
+	var c = curve_vars[i];
+	str += '<tr><td>' + c + '</td><td><input type="text" onchange="set_curve_var(\''+c+'\');" id="curve_var_input_'+c+'" value="" size="3"></td></tr>';
+    }
+    str += '</table>';
+    $('curve_inputs').innerHTML += str;
+
+    update_curve_inputs();
+}
+
+function update_curve_inputs() {
+    for (var i = 0; i < curve_vars.length; i++) {
+	var c = curve_vars[i];
+	eval("$('curve_var_input_"+c+"').value = " + c);
+    }
+
+    $('mapc_params').innerHTML = 'mapc.exe '+r0+' '+r1+' '+n+' '+a0+' '+a1+' '+thickness+' '+r2+' '+r3+' '+totalstep+' '+innerdrop+' '+outerdrop+' '+hill+' '+ct;
+}
+
+function dele() {
+    while (meshes.length) {
+	scene.remove( meshes.pop() );
+    }
+}
+
+function init() {
+
+    container = $( 'container' );
+
+    camera = new THREE.PerspectiveCamera( view.fov, container.offsetWidth / container.offsetHeight, 1, 10000 );
+    camera.position.x = view.eye[ 0 ];
+    camera.position.y = view.eye[ 1 ];
+    camera.position.z = view.eye[ 2 ];
+    camera.up.x = view.up[ 0 ];
+    camera.up.y = view.up[ 1 ];
+    camera.up.z = view.up[ 2 ];
+    view.camera = camera;
+
+    scene = new THREE.Scene();
+
+
+    light = new THREE.DirectionalLight( 0xffffff );
+    light.position.set( 0, 0, 1 );
+    scene.add( light );
+
+/*
+    radius = 200;
+    geometry  = new THREE.IcosahedronGeometry( radius, 1 );
+    var materials = [
+        new THREE.MeshLambertMaterial( { color: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } ),
+        new THREE.MeshBasicMaterial( { color: 0x000000, shading: THREE.FlatShading, wireframe: true, transparent: true } )
+
+    ];
+
+    group1 = THREE.SceneUtils.createMultiMaterialObject( geometry, materials );
+    group1.position.x = 0;
+    group1.rotation.x = 0;
+    scene.add( group1 );
+*/
+
+
+
+    generate_curve();
+
+
+    renderer = new THREE.CanvasRenderer( { antialias: false } );
+    renderer.setSize( container.offsetWidth, container.offsetHeight );
+
+    container.appendChild( renderer.domElement );
+
+    //document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+}
+
+function regen_scene()
+{
+    dele();
+    container.width = container.width;
+    generate_curve();
+    update_curve_inputs();
+}
+
+function onDocumentMouseMove( event ) {
+    mouseX = ( event.clientX - windowWidth / 2 );
+    mouseY = ( event.clientY - windowHeight / 2 );
+}
+
+function updateSize() {
+    if ( windowWidth != container.offsetWidth || windowHeight != container.offsetHeight ) {
+        windowWidth  = container.offsetWidth;
+        windowHeight = container.offsetHeight;
+        renderer.setSize ( windowWidth, windowHeight );
+    }
+}
+
+
+function animate() {
+    render();
+    requestAnimationFrame( animate );
+}
+
+
+function render() {
+    updateSize();
+
+    camera = view.camera;
+
+    view.updateCamera( camera, scene, mouseX, mouseY );
+
+    renderer.setClearColor( view.background, 1 );
+
+    camera.aspect = windowWidth / windowHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.render( scene, camera );
+}
+
+</script>
+
+
+</body>
+</html>
