@@ -113,7 +113,7 @@ function curve()
 	  'tex':tex
       };
 
-      this.data.push(geom);
+      return geom;
   }
 
   this.lump = function(r0, r1, a0, a1, i, n) {
@@ -134,13 +134,16 @@ function curve()
 
       if (!this.usesteps) {
 	  /*just use rlk's code    */
-	  this.side(x00, y00, z0, x01, y01, z0, x00, y00, z1, this.intex);
-	  this.side(x10, y10, z1, x11, y11, z1, x10, y10, z0, this.outtex);
-	  this.side(x00, y00, z1, x10, y10, z1, x00, y00, z0, this.blanktex);
-	  this.side(x01, y01, z0, x11, y11, z0, x01, y01, z1, this.blanktex);
+	  var alump = [
+	      this.side(x00, y00, z0, x01, y01, z0, x00, y00, z1, this.intex),
+	      this.side(x10, y10, z1, x11, y11, z1, x10, y10, z0, this.outtex),
+	      this.side(x00, y00, z1, x10, y10, z1, x00, y00, z0, this.blanktex),
+	      this.side(x01, y01, z0, x11, y11, z0, x01, y01, z1, this.blanktex),
 
-	  this.side(0, 0, z0, 1, 0, z0, 0, 1, z0, this.bottex);
-	  this.side(0, 0, z1, 0, 1, z1, 1, 0, z1, this.toptex);
+	      this.side(0, 0, z0, 1, 0, z0, 0, 1, z0, this.bottex),
+	      this.side(0, 0, z1, 0, 1, z1, 1, 0, z1, this.toptex)
+	  ];
+	  this.data.push(alump);
       } else {
 	  /*use Dave's code! */
 	  var stepsize = this.totalstep/n;
@@ -190,18 +193,23 @@ function curve()
             01 is top left
 	  */
 
-	  this.side(x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,             x10, y10, ((z1+zmod0)-this.outerdrop)-hillmodoutside, x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside, this.toptex);
-	  this.side(x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),    x10, y10, z0+zmod0+((this.innerdrop+cthi1)*this.ct),      x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),       this.bottex);
-	  this.side(x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,             x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),      x10, y10, z0+zmod0+((this.innerdrop+cthi1)*this.ct),       this.outtex);
-	  this.side(x10, y10, ((z1+zmod0)-this.outerdrop)-hillmodoutside,   x10, y10, z0+zmod0+((this.innerdrop+cthi1)*this.ct),      x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),       this.blanktex);
-	  this.side(x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,             x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),      x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),       this.blanktex);
+	  var alump = [
+	      this.side(x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,             x10, y10, ((z1+zmod0)-this.outerdrop)-hillmodoutside, x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside, this.toptex),
+	      this.side(x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),    x10, y10, z0+zmod0+((this.innerdrop+cthi1)*this.ct),      x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),       this.bottex),
+	      this.side(x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,             x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),      x10, y10, z0+zmod0+((this.innerdrop+cthi1)*this.ct),       this.outtex),
+	      this.side(x10, y10, ((z1+zmod0)-this.outerdrop)-hillmodoutside,   x10, y10, z0+zmod0+((this.innerdrop+cthi1)*this.ct),      x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),       this.blanktex),
+	      this.side(x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,             x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),      x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),       this.blanktex)
+	  ];
+	  this.data.push(alump);
 
-
-	  this.side(x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside,    x01, y01, ((z1+zmod1)-this.innerdrop)-hmi2,          x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,           this.toptex);
-	  this.side(x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),         x01, y01, z0+zmod1+((this.outerdrop+ctho2)*this.ct),      x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),       this.bottex);
-	  this.side(x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside,    x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),      x01, y01, z0+zmod1+((this.outerdrop+ctho2)*this.ct),       this.intex);
-	  this.side(x01, y01, ((z1+zmod1)-this.innerdrop)-hmi2,             x01, y01, z0+zmod1+((this.outerdrop+ctho2)*this.ct),      x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),       this.blanktex);
-	  this.side(x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside,    x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),      x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),       this.blanktex);
+	  alump = [
+	      this.side(x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside,    x01, y01, ((z1+zmod1)-this.innerdrop)-hmi2,          x11, y11, ((z1+zmod1)-this.outerdrop)-hmo2,           this.toptex),
+	      this.side(x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),         x01, y01, z0+zmod1+((this.outerdrop+ctho2)*this.ct),      x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),       this.bottex),
+	      this.side(x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside,    x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),      x01, y01, z0+zmod1+((this.outerdrop+ctho2)*this.ct),       this.intex),
+	      this.side(x01, y01, ((z1+zmod1)-this.innerdrop)-hmi2,             x01, y01, z0+zmod1+((this.outerdrop+ctho2)*this.ct),      x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),       this.blanktex),
+	      this.side(x00, y00, ((z1+zmod0)-this.innerdrop)-hillmodinside,    x11, y11, z0+zmod1+((this.innerdrop+cthi2)*this.ct),      x00, y00, z0+zmod0+((this.outerdrop+ctho1)*this.ct),       this.blanktex)
+	  ];
+	  this.data.push(alump);
       }
   }
 
