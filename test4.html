@@ -21,8 +21,10 @@ h1.title { font-size: 1em; }
     padding: 1em;
 }
 
+#mapc_map,
 #mapc_params {
     font-family: monospace;
+    white-space: pre;
 }
 
 </style>
@@ -36,11 +38,13 @@ h1.title { font-size: 1em; }
  <span id="camera_coord"></span>
  <div id="curve_inputs"></div>
  <a href="#" onclick="curve.random(); regen_scene();">randomize</a>
+ <a href="#" onclick="show_curve_map();">get .map</a>
  <hr>
  <div id="mapc_params"></div>
+ <div id="mapc_map"></div>
 </div>
 </td>
-<td><div id="container"></div></td>
+<td class="wrapper"><div id="container"></div></td>
 </table>
 <script src="three.min.js"></script>
 <script src="utils.js"></script>
@@ -154,6 +158,10 @@ function curve_render(c)
     }
 }
 
+function show_curve_map()
+{
+    $('mapc_map').innerHTML='<textarea cols="50" rows="20">' + curve.getmap() + '</textarea>';
+}
 
 function dele() {
     while (meshes.length) {

@@ -49,6 +49,28 @@ function curve()
       return this.r0+' '+this.r1+' '+this.n+' '+this.a0+' '+this.a1+' '+this.thickness+' '+this.r2+' '+this.r3+' '+this.totalstep+' '+this.innerdrop+' '+this.outerdrop+' '+this.hill+' '+this.ct;
   }
 
+    this.getmap = function() {
+	var s = "{\n";
+	s += "\"classname\" \"worldspawn\"\n";
+	s += "// This curve was created with the following parameters :\n";
+	s += "// curve " + this.getparams() + "\n";
+	for (var i = 0; i < this.data.length; i++) {
+	    var lump = this.data[i];
+	    s += "{\n";
+	    for (var j = 0; j < lump.length; j++) {
+		var d = lump[j]; // sides of the lump
+		s += "( "+(d.x0+0.0)+" "+(d.y0+0.0)+" "+(d.z0+0.0)+" ) ";
+		s += "( "+(d.x1+0.0)+" "+(d.y1+0.0)+" "+(d.z1+0.0)+" ) ";
+		s += "( "+(d.x2+0.0)+" "+(d.y2+0.0)+" "+(d.z2+0.0)+" ) ";
+		s += "mtrl/invisible";
+		s += " 0 0 0 0.500000 0.500000 0 0 0\n";
+	    }
+	    s += "}\n";
+	}
+	s += "}\n";
+	return s;
+    }
+
   this.random = function() {
       this.r0 = this.rndnum(0, 256/8) * 8; this.r2=this.r0;
 
