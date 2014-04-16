@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>test2</title>
+    <title>Neverball curve tool</title>
     <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <style>
 
+h1.title { position: absolute; top: 0; left: 1em; font-size: 1em; }
+
 #container {
     width: 800px;
     height: 600px;
-    float: right;
+    //    float: right;
 }
 
 #otherstuff {
@@ -25,16 +27,20 @@
 </style>
 </head>
 <body>
-
-<div id="container"></div>
-
+<table>
+<tr>
+<td>
+<h1 class="title">Neverball online curve tool</h1>
 <div id="otherstuff">
  <span id="camera_coord"></span>
  <div id="curve_inputs"></div>
- <a href="#" onclick="random_curve(); regen_scene();">randomize</a>
+ <a href="#" onclick="curve.random(); regen_scene();">randomize</a>
  <hr>
  <div id="mapc_params"></div>
 </div>
+</td>
+<td><div id="container"></div></td>
+</table>
 <script src="three.min.js"></script>
 <script src="utils.js"></script>
 
@@ -43,15 +49,17 @@
 
 <script>
 
-var curve_vars = new Array(
+var curve_vars = [
     'thickness', 'usesteps', 'totalstep', 'innerdrop', 'outerdrop', 'hill',
     'ct', 'r0', 'r1', 'r2', 'r3', 'n', 'a0', 'a1'
-);
+];
 
 
 var container;
 
 var views, scene, renderer;
+
+var curve;
 
 var meshes = new Array();
 var light;
@@ -75,12 +83,14 @@ var view = {
     }
 };
 
+curve = new curve();
 output_curve_inputs();
 init();
-animate();
+//animate();
+render();
 
 function set_curve_var(v) {
-    eval(v + " = " + $('curve_var_input_' + v).value + ";");
+    curve.setvalue(v, $('curve_var_input_' + v).value);
     regen_scene();
 }
 
@@ -88,7 +98,7 @@ function output_curve_inputs() {
     var str = '<table>';
     for (var i = 0; i < curve_vars.length; i++) {
 	var c = curve_vars[i];
-	str += '<tr><td>' + c + '</td><td><input type="text" onchange="set_curve_var(\''+c+'\');" id="curve_var_input_'+c+'" value="" size="3"></td></tr>';
+	str += '<tr><td>' + c + '</td><td><input type="text" onchange="set_curve_var(\''+c+'\');" id="curve_var_input_'+c+'" value="' + curve.getvalue(c) + '" size="3"></td></tr>';
     }
     str += '</table>';
     $('curve_inputs').innerHTML += str;
@@ -99,10 +109,10 @@ function output_curve_inputs() {
 function update_curve_inputs() {
     for (var i = 0; i < curve_vars.length; i++) {
 	var c = curve_vars[i];
-	eval("$('curve_var_input_"+c+"').value = " + c);
+	$('curve_var_input_'+c).value = curve.getvalue(c);
     }
 
-    $('mapc_params').innerHTML = 'mapc.exe '+r0+' '+r1+' '+n+' '+a0+' '+a1+' '+thickness+' '+r2+' '+r3+' '+totalstep+' '+innerdrop+' '+outerdrop+' '+hill+' '+ct;
+    $('mapc_params').innerHTML = 'curve.exe '+curve.r0+' '+curve.r1+' '+curve.n+' '+curve.a0+' '+curve.a1+' '+curve.thickness+' '+curve.r2+' '+curve.r3+' '+curve.totalstep+' '+curve.innerdrop+' '+curve.outerdrop+' '+curve.hill+' '+curve.ct;
 }
 
 function dele() {
@@ -148,7 +158,7 @@ function init() {
 
 
 
-    generate_curve();
+    curve.generate();
 
 
     renderer = new THREE.CanvasRenderer( { antialias: false } );
@@ -163,9 +173,10 @@ function init() {
 function regen_scene()
 {
     dele();
-    container.width = container.width;
-    generate_curve();
+    //container.width = container.width;
+    curve.generate();
     update_curve_inputs();
+    render();
 }
 
 function onDocumentMouseMove( event ) {
@@ -184,6 +195,7 @@ function updateSize() {
 
 function animate() {
     render();
+    // TODO: don't request animation frames all the damn time, only when stuff is changed.
     requestAnimationFrame( animate );
 }
 
