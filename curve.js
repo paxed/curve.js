@@ -19,17 +19,22 @@ function curve()
   this.a0 = 0;
   this.a1 = 180;
 
-  this.toptex    = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true, side:THREE.DoubleSide } );
-  this.intex     = new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe: true, side:THREE.DoubleSide } );
-  this.outtex    = new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true, side:THREE.DoubleSide } );
-  this.bottex    = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: false, side:THREE.DoubleSide } );
-  this.blanktex  = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, side:THREE.DoubleSide } );
+    this.toptex   = 0;
+    this.intex    = 1;
+    this.outtex   = 2;
+    this.bottex   = 3;
+    this.blanktex = 4;
+
+    this.data = [];
+
+    this.clear = function() {
+	this.data = [];
+    }
 
   this.rndnum = function(min, max) {
     return Math.floor(min + Math.random()*(max-min));
   }
 
-  //alert(typeof(this['a1']));
   this.setvalue = function(elem, value) {
       if (typeof(this[elem]) == 'number')
 	  this[elem] = parseFloat(value);
@@ -100,38 +105,15 @@ function curve()
   }
 
   this.side = function(x0, y0, z0, x1, y1, z1, x2, y2, z2, tex) {
-/*
-    var geom = new THREE.Geometry();
-    geom.vertices.push( new THREE.Vector3( x0, y0, z0 ) );
-    geom.vertices.push( new THREE.Vector3( x1, y1, z1 ) );
-    geom.vertices.push( new THREE.Vector3( x2, y2, z2 ) );
-    geom.vertices.push( new THREE.Vector3( (x1 + x2 - x0), (y1 + y2 - y0), (z1 + z2 - z0) ) );
 
-    geom.faces.push(new THREE.Face4(0, 1, 2, 3));
+      var geom = {
+	  'x0':x0, 'y0':y0, 'z0':z0,
+	  'x1':x1, 'y1':y1, 'z1':z1,
+	  'x2':x2, 'y2':y2, 'z2':z2,
+	  'tex':tex
+      };
 
-    mesh = new THREE.Mesh(geom, tex);
-    mesh.position.set(0.0, 0.0, 0.0);
-    scene.add(mesh);
-*/
-
-      var geom = new THREE.Geometry();
-
-      geom.vertices.push( new THREE.Vector3( x0, y0, z0 ) );
-      geom.vertices.push( new THREE.Vector3( x1, y1, z1 ) );
-      geom.vertices.push( new THREE.Vector3( x2, y2, z2 ) );
-      geom.vertices.push( new THREE.Vector3( (x1 + x2 - x0), (y1 + y2 - y0), (z1 + z2 - z0) ) );
-
-      geom.faces.push( new THREE.Face3( 2, 1, 0 ) );
-      geom.faces.push( new THREE.Face3( 1, 2, 3 ) );
-
-      geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
-      geom.faces.push( new THREE.Face3( 3, 2, 1 ) );
-
-      var mesh = new THREE.Mesh( geom, tex );
-
-      meshes.push(mesh);
-
-      scene.add( mesh );
+      this.data.push(geom);
   }
 
   this.lump = function(r0, r1, a0, a1, i, n) {
