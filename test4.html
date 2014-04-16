@@ -6,12 +6,13 @@
       <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <style>
 
-h1.title { position: absolute; top: 0; left: 1em; font-size: 1em; }
+h1.title { font-size: 1em; }
+
+.wrapper { vertical-align:top; }
 
 #container {
     width: 800px;
     height: 600px;
-    //    float: right;
 }
 
 #otherstuff {
@@ -27,9 +28,9 @@ h1.title { position: absolute; top: 0; left: 1em; font-size: 1em; }
 </style>
 </head>
 <body>
-<table>
+<table id="wrapper">
 <tr>
-<td>
+<td class="wrapper">
 <h1 class="title">Neverball online curve tool</h1>
 <div id="otherstuff">
  <span id="camera_coord"></span>
@@ -112,7 +113,7 @@ function update_curve_inputs() {
 	$('curve_var_input_'+c).value = curve.getvalue(c);
     }
 
-    $('mapc_params').innerHTML = 'curve.exe '+curve.r0+' '+curve.r1+' '+curve.n+' '+curve.a0+' '+curve.a1+' '+curve.thickness+' '+curve.r2+' '+curve.r3+' '+curve.totalstep+' '+curve.innerdrop+' '+curve.outerdrop+' '+curve.hill+' '+curve.ct;
+    $('mapc_params').innerHTML = 'curve.exe '+curve.getparams();
 }
 
 function dele() {

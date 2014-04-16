@@ -40,6 +40,10 @@ function curve()
       return 0;
   }
 
+  this.getparams = function() {
+      return this.r0+' '+this.r1+' '+this.n+' '+this.a0+' '+this.a1+' '+this.thickness+' '+this.r2+' '+this.r3+' '+this.totalstep+' '+this.innerdrop+' '+this.outerdrop+' '+this.hill+' '+this.ct;
+  }
+
   this.random = function() {
       this.r0 = this.rndnum(0, 256/8) * 8; this.r2=this.r0;
 
