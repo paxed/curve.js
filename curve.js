@@ -19,6 +19,14 @@ function curve()
   this.a0 = 0;
   this.a1 = 180;
 
+    this.textures = [
+	'mtrl/invisible',
+	'mtrl/invisible',
+	'mtrl/invisible',
+	'mtrl/invisible',
+	'mtrl/invisible'
+    ];
+
     this.toptex   = 0;
     this.intex    = 1;
     this.outtex   = 2;
@@ -62,7 +70,7 @@ function curve()
 		s += "( "+(d.x0+0.0)+" "+(d.y0+0.0)+" "+(d.z0+0.0)+" ) ";
 		s += "( "+(d.x1+0.0)+" "+(d.y1+0.0)+" "+(d.z1+0.0)+" ) ";
 		s += "( "+(d.x2+0.0)+" "+(d.y2+0.0)+" "+(d.z2+0.0)+" ) ";
-		s += "mtrl/invisible";
+		s += this.textures[d.tex]; //"mtrl/invisible";
 		s += " 0 0 0 0.500000 0.500000 0 0 0\n";
 	    }
 	    s += "}\n";

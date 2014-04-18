@@ -140,11 +140,17 @@ var view = {
 };
 
 var textures = [
-    new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true, side:THREE.DoubleSide } ),
-    new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe: true, side:THREE.DoubleSide } ),
-    new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true, side:THREE.DoubleSide } ),
-    new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, side:THREE.DoubleSide } ),
-    new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, side:THREE.DoubleSide } )
+    {'name':'top', 'def':'turf-green', 'mesh':new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'in', 'def':'turf-grey', 'mesh':new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'out', 'def':'turf-grey', 'mesh':new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'bottom', 'def':'turf-grey', 'mesh':new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'blank', 'def':'invisible', 'mesh':new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, side:THREE.DoubleSide } )}
+];
+
+var select_textures = [
+    'invisible',
+    'turf-green',
+    'turf-grey'
 ];
 
 curve = new curve();
@@ -174,6 +180,27 @@ function set_curve_var(v) {
     regen_scene();
 }
 
+function set_texture(name, e)
+{
+    for (var i = 0; i < textures.length; i++) {
+	if (name == textures[i].name) {
+	    textures[i].def = e.options[e.selectedIndex].value;
+	}
+    }
+}
+
+function get_tex_select(name, def)
+{
+    var s = '<select id="texture_select_'+name+'" onchange="set_texture(\''+name+'\', this)">';
+    for (var i = 0; i < select_textures.length; i++) {
+	s += '<option value="'+select_textures[i]+'"';
+	if (def == select_textures[i]) s += ' selected';
+	s += '>' + select_textures[i] + '</option>';
+    }
+    s += '</select>';
+    return s;
+}
+
 function output_curve_inputs() {
     var str = '<table>';
     var joinline = 0;
@@ -198,6 +225,13 @@ function output_curve_inputs() {
 	    str += '</td>';
 	    str += '</tr>';
 	}
+    }
+    str += '<tr><td colspan="2"><hr></td></tr>';
+    for (var i = 0; i < textures.length; i++) {
+	str += '<tr>';
+	str += '<td>' + textures[i].name + '</td>';
+	str += '<td>' + get_tex_select(textures[i].name, textures[i].def) + '</td>';
+	str += '</tr>';
     }
     str += '</table>';
     $('curve_inputs').innerHTML += str;
@@ -231,7 +265,7 @@ function curve_render(c)
 	    geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
 	    geom.faces.push( new THREE.Face3( 1, 2, 0 ) );
 
-	    var mesh = new THREE.Mesh( geom, textures[d.tex] );
+	    var mesh = new THREE.Mesh( geom, textures[d.tex].mesh );
 
 	    meshes.push(mesh);
 
@@ -269,6 +303,9 @@ function change_camera(i)
 
 function show_curve_map()
 {
+    for (var i = 0; i < textures.length; i++) {
+	curve.textures[i] = 'mtrl/' + textures[i].def;
+    }
     $('mapc_map').innerHTML='<textarea cols="50" rows="20">' + curve.getmap() + '</textarea>';
 }
 
