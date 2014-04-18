@@ -57,10 +57,21 @@ h1.title { font-size: 1em; }
 <script>
 
 var curve_vars = [
-    'thickness', 'usesteps', 'totalstep', 'innerdrop', 'outerdrop', 'hill',
-    'ct', 'r0', 'r1', 'r2', 'r3', 'n', 'a0', 'a1'
+    { 'name': 'segments', 'varname': 'n', 'desc': 'Number of segments' },
+    { 'name': 'angle', 'varname': 'a0', 'desc': 'Starting angle', 'joinline':1, 'separator': '-' },
+    { 'varname': 'a1', 'desc': 'Ending angle' },
+    { 'varname': 'thickness', 'desc': '' },
+    { 'varname': 'usesteps', 'desc': '' },
+    { 'varname': 'totalstep', 'desc': '' },
+    { 'varname': 'innerdrop', 'desc': '' },
+    { 'varname': 'outerdrop', 'desc': '' },
+    { 'varname': 'hill', 'desc': '' },
+    { 'varname': 'ct', 'desc': '' },
+    { 'name': 'start radius', 'varname': 'r0', 'desc': 'Start inner radius', 'joinline':1, 'separator': '-'  },
+    { 'varname': 'r1', 'desc': 'Start outer radius' },
+    { 'name': 'end radius', 'varname': 'r2', 'desc': 'End inner radius', 'joinline':1, 'separator': '-'  },
+    { 'varname': 'r3', 'desc': 'End outer radius' },
 ];
-
 
 var container;
 
@@ -101,9 +112,22 @@ function set_curve_var(v) {
 
 function output_curve_inputs() {
     var str = '<table>';
+    var joinline = 0;
     for (var i = 0; i < curve_vars.length; i++) {
 	var c = curve_vars[i];
-	str += '<tr><td>' + c + '</td><td><input type="text" onchange="set_curve_var(\''+c+'\');" id="curve_var_input_'+c+'" value="' + curve.getvalue(c) + '" size="3"></td></tr>';
+	var nam = c.name ? c.name : c.varname;
+	if (!joinline) {
+	    str += '<tr>';
+	    str += '<td>' + nam + '</td>';
+	    str += '<td>';
+	}
+	str += '<input type="text" onchange="set_curve_var(\''+c.varname+'\');" id="curve_var_input_'+c.varname+'" value="' + curve.getvalue(c.varname) + '" size="3" title="'+c.desc+'">';
+	joinline = c.joinline;
+	if (c.separator) str += c.separator;
+	if (!joinline) {
+	    str += '</td>';
+	    str += '</tr>';
+	}
     }
     str += '</table>';
     $('curve_inputs').innerHTML += str;
@@ -114,7 +138,7 @@ function output_curve_inputs() {
 function update_curve_inputs() {
     for (var i = 0; i < curve_vars.length; i++) {
 	var c = curve_vars[i];
-	$('curve_var_input_'+c).value = curve.getvalue(c);
+	$('curve_var_input_'+c.varname).value = curve.getvalue(c.varname);
     }
 
     $('mapc_params').innerHTML = 'curve.exe '+curve.getparams();
