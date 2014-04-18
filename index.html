@@ -38,9 +38,7 @@ h1.title { font-size: 1em; }
  <div id="curve_inputs"></div>
  <a href="#" onclick="curve.random(); regen_scene();">randomize</a> |
  <a href="#" onclick="show_curve_map();">get .map</a> |
- <a href="#" onclick="change_camera(0);">cam 0</a>
- <a href="#" onclick="change_camera(1);">cam 1</a>
- <a href="#" onclick="change_camera(2);">cam 2</a>
+ <a href="#" onclick="change_camera(0);">reset&nbsp;cam</a>
  <hr>
  <div id="mapc_params"></div>
  <div id="mapc_map"></div>
@@ -192,9 +190,9 @@ function change_camera(i)
     switch (i % 3) {
     default:
     case 0:
-	camera.position.x = 0;
-	camera.position.y = 0;
-	camera.position.z = -800;
+	camera.position.x = view.eye[0];
+	camera.position.y = view.eye[1];
+	camera.position.z = view.eye[2];
 	break;
     case 1:
 	camera.position.x = 800;
