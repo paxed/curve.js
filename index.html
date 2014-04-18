@@ -6,18 +6,37 @@
       <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <style>
 
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 h1.title { font-size: 1em; }
 
-.wrapper { vertical-align:top; }
+table#wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.wrapper {
+    vertical-align:top;
+    width: 50%;
+    padding: 2px;
+    margin: 2px;
+}
 
 #container {
-    width: 800px;
-    height: 600px;
+    width: 98%;
+    height: 98%;
+    padding: 2px;
+    margin: 2px;
 }
 
 #otherstuff {
     border: 1px solid black;
-    background-color: #d0d0d0;
+    background-color: #e0e0e0;
     padding: 1em;
 }
 
@@ -44,7 +63,7 @@ h1.title { font-size: 1em; }
  <div id="mapc_map"></div>
 </div>
 </td>
-<td class="wrapper"><div id="container"></div></td>
+<td class="wrapper"><canvas id="container"></canvas></td>
 </table>
 <script src="three.min.js"></script>
 <script src="OrbitControls.js"></script>
@@ -72,7 +91,6 @@ var curve_vars = [
     { 'varname': 'ct', 'desc': '', 'type':'checkbox' },
 ];
 
-var container;
 
 var views, scene, renderer;
 var control;
@@ -225,6 +243,9 @@ function init() {
 
     container = $( 'container' );
 
+    container.width = container.offsetWidth = container.parentNode.offsetWidth;
+    container.height = container.offsetHeight = container.parentNode.offsetHeight;
+
     camera = new THREE.PerspectiveCamera( view.fov, container.offsetWidth / container.offsetHeight, 1, 10000 );
     camera.position.x = view.eye[ 0 ];
     camera.position.y = view.eye[ 1 ];
@@ -264,10 +285,8 @@ function init() {
     curve_render(curve);
 
 
-    renderer = new THREE.CanvasRenderer( { antialias: false } );
+    renderer = new THREE.CanvasRenderer( { antialias: false, canvas: container } );
     renderer.setSize( container.offsetWidth, container.offsetHeight );
-
-    container.appendChild( renderer.domElement );
 
     control = new THREE.OrbitControls(camera, renderer.domElement);
 
@@ -291,7 +310,6 @@ function mouse_rotation_disable(e)
 function regen_scene()
 {
     dele();
-    //container.width = container.width;
     curve.generate();
     curve_render(curve);
     update_curve_inputs();
@@ -299,7 +317,10 @@ function regen_scene()
 }
 
 function updateSize() {
-    if ( windowWidth != container.offsetWidth || windowHeight != container.offsetHeight ) {
+    var container = $('container');
+    if ( windowWidth != container.parentNode.offsetWidth || windowHeight != container.parentNode.offsetHeight ) {
+	container.width = container.offsetWidth = container.parentNode.offsetWidth;
+	container.height = container.offsetHeight = container.parentNode.offsetHeight;
         windowWidth  = container.offsetWidth;
         windowHeight = container.offsetHeight;
         renderer.setSize ( windowWidth, windowHeight );
