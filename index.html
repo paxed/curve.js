@@ -61,8 +61,8 @@ var curve_vars = [
     { 'name': 'angle', 'varname': 'a0', 'desc': 'Starting angle', 'joinline':1, 'separator': '-' },
     { 'varname': 'a1', 'desc': 'Ending angle' },
     { 'varname': 'thickness', 'desc': '' },
-    { 'varname': 'usesteps', 'desc': '' },
-    { 'varname': 'totalstep', 'desc': '' },
+    { 'name': 'slope', 'varname': 'usesteps', 'desc': '', 'type':'checkbox', 'joinline':1, 'separator': ' ' },
+    { 'varname': 'totalstep', 'desc': 'Number to slope up (positive) or down (negative)' },
     { 'varname': 'innerdrop', 'desc': '' },
     { 'varname': 'outerdrop', 'desc': '' },
     { 'varname': 'hill', 'desc': '' },
@@ -106,7 +106,14 @@ init();
 render();
 
 function set_curve_var(v) {
-    curve.setvalue(v, $('curve_var_input_' + v).value);
+    var e = $('curve_var_input_' + v);
+    if (e.type == 'text') {
+	curve.setvalue(v, e.value);
+    } else if (e.type == 'checkbox') {
+	curve.setvalue(v, e.checked ? 1 : 0);
+    } else {
+	alert("Unhandled set_curve_var elem type: " + e.type);
+    }
     regen_scene();
 }
 
@@ -121,7 +128,13 @@ function output_curve_inputs() {
 	    str += '<td>' + nam + '</td>';
 	    str += '<td>';
 	}
-	str += '<input type="text" onchange="set_curve_var(\''+c.varname+'\');" id="curve_var_input_'+c.varname+'" value="' + curve.getvalue(c.varname) + '" size="3" title="'+c.desc+'">';
+	if (c.type == 'checkbox') {
+	    str += '<input type="checkbox" onchange="set_curve_var(\''+c.varname+'\');" id="curve_var_input_'+c.varname+'"';
+	    if (curve.getvalue(c.varname)) str += ' checked';
+	    str += 'title="'+c.desc+'">';
+	} else {
+	    str += '<input type="text" onchange="set_curve_var(\''+c.varname+'\');" id="curve_var_input_'+c.varname+'" value="' + curve.getvalue(c.varname) + '" size="3" title="'+c.desc+'">';
+	}
 	joinline = c.joinline;
 	if (c.separator) str += c.separator;
 	if (!joinline) {
