@@ -49,6 +49,7 @@ h1.title { font-size: 1em; }
 <td class="wrapper"><div id="container"></div></td>
 </table>
 <script src="three.min.js"></script>
+<script src="OrbitControls.js"></script>
 <script src="utils.js"></script>
 
 <script src="curve.js"></script>
@@ -76,6 +77,8 @@ var curve_vars = [
 var container;
 
 var views, scene, renderer;
+var control;
+var clock;
 
 var curve;
 
@@ -83,6 +86,7 @@ var meshes = new Array();
 var light;
 
 var windowWidth, windowHeight;
+var allow_animation = 0;
 
 var view = {
     background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
@@ -267,6 +271,23 @@ function init() {
 
     container.appendChild( renderer.domElement );
 
+    control = new THREE.OrbitControls(camera, renderer.domElement);
+
+    renderer.domElement.onmousedown = mouse_rotation_enable;
+    renderer.domElement.onmouseup = mouse_rotation_disable;
+
+    clock = new THREE.Clock();
+
+}
+
+function mouse_rotation_enable(e)
+{
+    allow_animation = 1;
+    animate();
+}
+function mouse_rotation_disable(e)
+{
+    allow_animation = 0;
 }
 
 function regen_scene()
@@ -289,9 +310,10 @@ function updateSize() {
 
 
 function animate() {
+    var dt = clock.getDelta();
+    control.update(dt);
     render();
-    // TODO: don't request animation frames all the damn time, only when stuff is changed.
-    requestAnimationFrame( animate );
+    if (allow_animation) requestAnimationFrame( animate );
 }
 
 
