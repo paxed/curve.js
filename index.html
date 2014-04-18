@@ -154,6 +154,7 @@ var select_textures = [
 ];
 
 curve = new curve();
+read_cookies();
 output_curve_inputs();
 init();
 //animate();
@@ -185,6 +186,12 @@ function set_texture(name, e)
     for (var i = 0; i < textures.length; i++) {
 	if (name == textures[i].name) {
 	    textures[i].def = e.options[e.selectedIndex].value;
+	    var cookie = [];
+	    for (var j = 0; j < textures.length; j++) {
+		cookie.push(textures[j].def);
+	    }
+	    setcookie('curvejs-tex', cookie.join(','), 365);
+	    return;
 	}
     }
 }
@@ -314,6 +321,15 @@ function dele() {
 	scene.remove( meshes.pop() );
     }
     curve.clear();
+}
+
+function read_cookies()
+{
+    var cookie = getcookie('curvejs-tex').split(",");
+    if (cookie.length == textures.length)
+	for (var i = 0; i < cookie.length; i++) {
+	    textures[i].def = cookie[i];
+	}
 }
 
 function init() {
