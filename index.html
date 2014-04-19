@@ -132,8 +132,8 @@ var windowWidth, windowHeight;
 var allow_animation = 0;
 
 var view = {
-    background: new THREE.Color().setRGB( 0.5, 0.7, 0.7 ),
-    eye: [ 0, 0, -800 ],
+    background: new THREE.Color(0x80b2b2),
+    eye: [ 0, 0, 800 ],
     up: [ 0, 1, 0 ],
     center: [ 0, 0, 0 ],
     fov: 60
@@ -335,6 +335,33 @@ function read_cookies()
 	}
 }
 
+function create_grid(gridsize)
+{
+    var num = 20;
+    if (!gridsize) gridsize = 32;
+
+    var mat = new THREE.LineDashedMaterial({ linewidth: 1, color: 0x708888, dashSize: 1, gapSize: 2 });
+
+    for (var i = -(Math.round(num/2)); i <= Math.round(num/2); i++) {
+	var geom = new THREE.Geometry();
+	geom.vertices.push(new THREE.Vector3(-(gridsize*num)/2, i*gridsize, 0));
+	geom.vertices.push(new THREE.Vector3((gridsize*num)/2, i*gridsize, 0));
+	geom.computeLineDistances();
+	var axisline = new THREE.Line(geom, mat, THREE.LinePieces);
+	meshes.push(axisline);
+	scene.add(axisline);
+
+	var geom = new THREE.Geometry();
+	geom.vertices.push(new THREE.Vector3(i*gridsize, -(gridsize*num/2), 0));
+	geom.vertices.push(new THREE.Vector3(i*gridsize, (gridsize*num/2), 0));
+	geom.computeLineDistances();
+	var axisline = new THREE.Line(geom, mat, THREE.LinePieces);
+	meshes.push(axisline);
+	scene.add(axisline);
+
+    }
+}
+
 function init() {
 
     container = $( 'container' );
@@ -379,7 +406,7 @@ function init() {
 
     curve.generate();
     curve_render(curve);
-
+    create_grid();
 
     renderer = new THREE.CanvasRenderer( { antialias: false, canvas: container } );
     renderer.setSize( container.offsetWidth, container.offsetHeight );
@@ -406,6 +433,7 @@ function mouse_rotation_disable(e)
 function regen_scene()
 {
     dele();
+    create_grid();
     curve.generate();
     curve_render(curve);
     update_curve_inputs();
