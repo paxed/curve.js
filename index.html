@@ -362,6 +362,15 @@ function create_grid(gridsize)
     }
 }
 
+/* from THREE.js Detector */
+function webgl_detect()
+{
+    try {
+	var canvas = document.createElement( 'canvas' );
+	return !! window.WebGLRenderingContext && ( canvas.getContext( 'webgl' ) || canvas.getContext( 'experimental-webgl' ) );
+    } catch( e ) { return false; }
+}
+
 function init() {
 
     container = $( 'container' );
@@ -408,7 +417,10 @@ function init() {
     curve_render(curve);
     create_grid();
 
-    renderer = new THREE.CanvasRenderer( { antialias: false, canvas: container } );
+    var rendparams = { antialias: false, canvas: container };
+
+    renderer = webgl_detect() ? new THREE.WebGLRenderer(rendparams): new THREE.CanvasRenderer(rendparams);
+
     renderer.setSize( container.offsetWidth, container.offsetHeight );
 
     control = new THREE.OrbitControls(camera, renderer.domElement);
