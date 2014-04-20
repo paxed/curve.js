@@ -79,11 +79,11 @@ table#wrapper {
 <td class="wrapper">
 <h1 class="title">Neverball online curve tool</h1>
 <div id="otherstuff">
- <a href="#" class="flright button" onclick="display_help(1);">?</a>
+ <a href="#" class="flright button" onclick="display_help(1);return false;">?</a>
  <div id="curve_inputs"></div>
- <a href="#" onclick="curve.random(); regen_scene();">randomize</a> |
- <a href="#" onclick="show_curve_map();">get .map</a> |
- <a href="#" onclick="change_camera(0);">reset&nbsp;cam</a>
+ <a href="#" onclick="curve.random(); regen_scene();return false;">randomize</a> |
+ <a href="#" onclick="show_curve_map();return false;">get&nbsp;.map</a> |
+ <a href="#" onclick="change_camera(0);return false;">reset&nbsp;cam</a>
  <hr>
  <div id="mapc_params"></div>
  <div id="mapc_map"></div>
@@ -98,7 +98,7 @@ This is a javascript version of the curve-tool for <a href="http://neverball.org
 * Drag with mouse right button to pan.
 * Drag with mouse middle button to zoom.
 <div class="center">
-<a href="#" class="button" onclick="display_help(0);">OK</a>
+<a href="#" class="button" onclick="display_help(0);return false;">OK</a>
 </div>
 </div>
 <script src="three.min.js"></script>
@@ -199,7 +199,7 @@ function display_texture_select(idx, show)
     var n = textures[idx].name;
     if (show) {
 	var d = textures[idx].def;
-	$('tex_select_span_'+n).innerHTML = get_tex_select(n, d) + '<a href="#" class="button" onclick="display_texture_select('+idx+')">-</a>';
+	$('tex_select_span_'+n).innerHTML = get_tex_select(n, d) + '<a href="#" class="button" onclick="display_texture_select('+idx+');return false;">-</a>';
 	$('tex_input_'+n).style.display='none';
 	$('tex_select_a_'+n).style.display='none';
     } else {
@@ -278,7 +278,7 @@ function output_curve_inputs() {
 	str += '<td>' + n + '</td>';
 	str += '<td>';
 	str += '<input type="text" id="tex_input_'+n+'" value="'+d+'" size="10" onchange="set_texture(\''+n+'\', this, 1)">';
-	str += '<a class="button" href="#" id="tex_select_a_'+n+'" onclick="display_texture_select('+i+', 1);">+</a>';
+	str += '<a class="button" href="#" id="tex_select_a_'+n+'" onclick="display_texture_select('+i+', 1);return false;">+</a>';
 	str += '<span id="tex_select_span_'+n+'"></span>';
 	str += '</td>';
 	str += '</tr>';
