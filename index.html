@@ -40,6 +40,15 @@ table#wrapper {
     padding: 1em;
 }
 
+.button {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border: 2px outset lightgrey;
+    background-color:lightgrey;
+    color: black;
+    text-decoration: none;
+}
+
 #mapc_map,
 #mapc_params {
     font-family: monospace;
@@ -70,7 +79,7 @@ table#wrapper {
 <td class="wrapper">
 <h1 class="title">Neverball online curve tool</h1>
 <div id="otherstuff">
- <a href="#" class="flright" onclick="display_help(1);">?</a>
+ <a href="#" class="flright button" onclick="display_help(1);">?</a>
  <div id="curve_inputs"></div>
  <a href="#" onclick="curve.random(); regen_scene();">randomize</a> |
  <a href="#" onclick="show_curve_map();">get .map</a> |
@@ -89,7 +98,7 @@ This is a javascript version of the curve-tool for <a href="http://neverball.org
 * Drag with mouse right button to pan.
 * Drag with mouse middle button to zoom.
 <div class="center">
-<a href="#" onclick="display_help(0);">OK</a>
+<a href="#" class="button" onclick="display_help(0);">OK</a>
 </div>
 </div>
 <script src="three.min.js"></script>
@@ -185,11 +194,29 @@ function set_curve_var(v) {
     regen_scene();
 }
 
-function set_texture(name, e)
+function display_texture_select(idx, show)
+{
+    var n = textures[idx].name;
+    if (show) {
+	var d = textures[idx].def;
+	$('tex_select_span_'+n).innerHTML = get_tex_select(n, d) + '<a href="#" class="button" onclick="display_texture_select('+idx+')">-</a>';
+	$('tex_input_'+n).style.display='none';
+	$('tex_select_a_'+n).style.display='none';
+    } else {
+	$('tex_select_span_'+n).innerHTML = '';
+	$('tex_input_'+n).style.display='inline';
+	$('tex_select_a_'+n).style.display='inline';
+    }
+}
+
+function set_texture(name, e, inp)
 {
     for (var i = 0; i < textures.length; i++) {
 	if (name == textures[i].name) {
-	    textures[i].def = e.options[e.selectedIndex].value;
+	    var v = inp ? e.value : e.options[e.selectedIndex].value
+	    textures[i].def = v;
+	    $('tex_input_' + name).value = v;
+	    display_texture_select(i, 0);
 	    var cookie = [];
 	    for (var j = 0; j < textures.length; j++) {
 		cookie.push(textures[j].def);
@@ -202,11 +229,18 @@ function set_texture(name, e)
 
 function get_tex_select(name, def)
 {
-    var s = '<select id="texture_select_'+name+'" onchange="set_texture(\''+name+'\', this)">';
-    for (var i = 0; i < select_textures.length; i++) {
-	s += '<option value="'+select_textures[i]+'"';
-	if (def == select_textures[i]) s += ' selected';
-	s += '>' + select_textures[i] + '</option>';
+    var s = '<select style="width:10em;" id="texture_select_'+name+'" onchange="set_texture(\''+name+'\', this)">';
+    var texs = select_textures.slice();
+    for (var i = 0; i < textures.length; i++) {
+	texs.push(textures[i].def);
+    }
+    texs = texs.unique();
+    texs.sort();
+    for (var i = 0; i < texs.length; i++) {
+	s += '<option value="'+texs[i]+'"';
+	s += '  onclick="set_texture(\''+name+'\', this.parentNode)"';
+	if (def == texs[i]) s += ' selected';
+	s += '>' + texs[i] + '</option>';
     }
     s += '</select>';
     return s;
@@ -238,9 +272,15 @@ function output_curve_inputs() {
 	}
     }
     for (var i = 0; i < textures.length; i++) {
+	var n = textures[i].name;
+	var d = textures[i].def;
 	str += '<tr>';
-	str += '<td>' + textures[i].name + '</td>';
-	str += '<td>' + get_tex_select(textures[i].name, textures[i].def) + '</td>';
+	str += '<td>' + n + '</td>';
+	str += '<td>';
+	str += '<input type="text" id="tex_input_'+n+'" value="'+d+'" size="10" onchange="set_texture(\''+n+'\', this, 1)">';
+	str += '<a class="button" href="#" id="tex_select_a_'+n+'" onclick="display_texture_select('+i+', 1);">+</a>';
+	str += '<span id="tex_select_span_'+n+'"></span>';
+	str += '</td>';
 	str += '</tr>';
     }
     str += '</table>';
