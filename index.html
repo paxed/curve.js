@@ -71,6 +71,13 @@ table#wrapper {
     float: right;
 }
 
+.tex_preview_color {
+    border: 1px solid black;
+    font-family: monospace;
+    padding: 0 0.2em;
+    margin-right: 0.5em;
+}
+
 </style>
 </head>
 <body>
@@ -148,12 +155,20 @@ var view = {
     fov: 60
 };
 
+var texture_colors = [
+    'ff0000',
+    '00ff00',
+    '0000ff',
+    'ffffff',
+    '000000',
+];
+
 var textures = [
-    {'name':'top', 'def':'turf-green', 'mesh':new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true, side:THREE.DoubleSide } )},
-    {'name':'in', 'def':'turf-grey', 'desc':'inner edge', 'mesh':new THREE.MeshBasicMaterial( { color: 0x00ff00, wireframe: true, side:THREE.DoubleSide } )},
-    {'name':'out', 'def':'turf-grey', 'desc':'outer edge', 'mesh':new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true, side:THREE.DoubleSide } )},
-    {'name':'bottom', 'def':'turf-grey', 'mesh':new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true, side:THREE.DoubleSide } )},
-    {'name':'blank', 'def':'invisible', 'desc':'joins', 'mesh':new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: true, side:THREE.DoubleSide } )}
+    {'name':'top', 'def':'turf-green', 'mesh':new THREE.MeshBasicMaterial( { color: parseInt(texture_colors[0], 16), wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'in', 'def':'turf-grey', 'desc':'inner edge', 'mesh':new THREE.MeshBasicMaterial( { color: parseInt(texture_colors[1], 16), wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'out', 'def':'turf-grey', 'desc':'outer edge', 'mesh':new THREE.MeshBasicMaterial( { color: parseInt(texture_colors[2], 16), wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'bottom', 'def':'turf-grey', 'mesh':new THREE.MeshBasicMaterial( { color: parseInt(texture_colors[3], 16), wireframe: true, side:THREE.DoubleSide } )},
+    {'name':'blank', 'def':'invisible', 'desc':'joins', 'mesh':new THREE.MeshBasicMaterial( { color: parseInt(texture_colors[4], 16), wireframe: true, side:THREE.DoubleSide } )}
 ];
 
 var select_textures = [
@@ -278,6 +293,7 @@ function output_curve_inputs() {
 	str += '<tr title="Texture for the '+desc+' of the curve">';
 	str += '<td>' + n + '</td>';
 	str += '<td>';
+	str += '<span class="tex_preview_color" style="background-color:#'+texture_colors[i]+'" title="Color for this texture in the 3D preview">&nbsp;</span>';
 	str += '<input type="text" id="tex_input_'+n+'" value="'+d+'" size="10" onchange="set_texture(\''+n+'\', this, 1)">';
 	str += '<a class="button" href="#" id="tex_select_a_'+n+'" onclick="display_texture_select('+i+', 1);return false;">+</a>';
 	str += '<span id="tex_select_span_'+n+'"></span>';
