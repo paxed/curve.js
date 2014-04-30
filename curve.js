@@ -54,7 +54,7 @@ function curve()
   }
 
   this.getparams = function() {
-      return this.r0+' '+this.r1+' '+this.n+' '+this.a0+' '+this.a1+' '+this.thickness+' '+this.r2+' '+this.r3+' '+(this.usesteps ? this.totalstep : 0)+' '+this.innerdrop+' '+this.outerdrop+' '+this.hill+' '+this.ct;
+      return this.r0+' '+this.r1+' '+this.n+' '+this.a0+' '+this.a1+' '+this.thickness+' '+this.r2+' '+this.r3+(!this.usesteps ? '' : ' '+this.totalstep+' '+this.innerdrop+' '+this.outerdrop+' '+this.hill+' '+this.ct);
   }
 
     this.getmap = function() {

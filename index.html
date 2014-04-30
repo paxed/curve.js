@@ -201,7 +201,7 @@ function display_help(i)
 function set_curve_var(v) {
     var e = $('curve_var_input_' + v);
     if (e.type == 'text') {
-	curve.setvalue(v, e.value);
+	curve.setvalue(v, ((!e.value || isNaN(e.value)) ? 0 : e.value));
     } else if (e.type == 'checkbox') {
 	curve.setvalue(v, e.checked ? 1 : 0);
     } else {
