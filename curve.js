@@ -106,6 +106,9 @@ function curve()
 
       this.innerdrop = 0;
       this.outerdrop = 0;
+
+      this.usesteps = 0;
+
       if (this.rndnum(1,100)<=40) {
 	  if (this.rndnum(1,100)<=50) {
 	      if (this.thickness>8) {
@@ -129,8 +132,11 @@ function curve()
       }
 
       this.ct = 1;
-      if (this.rndnum(1,100)<=25)
+      if (this.rndnum(1,100)<=25) {
 	  this.ct=0;
+      } else {
+	  this.usesteps = 1;
+      }
 
   }
 

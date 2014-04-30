@@ -310,7 +310,11 @@ function output_curve_inputs() {
 function update_curve_inputs() {
     for (var i = 0; i < curve_vars.length; i++) {
 	var c = curve_vars[i];
-	$('curve_var_input_'+c.varname).value = curve.getvalue(c.varname);
+	if (c.type == 'checkbox') {
+	    $('curve_var_input_'+c.varname).checked = (curve.getvalue(c.varname) ? 1 : 0);
+	} else {
+	    $('curve_var_input_'+c.varname).value = curve.getvalue(c.varname);
+	}
     }
 
     $('mapc_params').innerHTML = 'curve.exe '+curve.getparams();
